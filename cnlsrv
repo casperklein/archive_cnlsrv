@@ -1,14 +1,10 @@
 #!/usr/bin/env php
 <?php
 require_once dirname(__FILE__).'/sockets.php';
-class AES256{
-  public static function decrypt($data,$key,$iv=null,$mode='cbc'){
-    $c=mcrypt_module_open(MCRYPT_RIJNDAEL_128,'',$mode,'');
+class AES{
+  public static function decrypt($data,$key,$iv=null){
     $iv=is_null($iv)?$key:$iv;
-    mcrypt_generic_init($c,$key,$iv);
-    $plain=mdecrypt_generic($c,$data);
-    mcrypt_generic_deinit($c);
-    mcrypt_module_close($c);
+    $plain=openssl_decrypt($data,'aes-128-cbc',$key,OPENSSL_RAW_DATA|OPENSSL_NO_PADDING,$iv);
     return $plain;
   }
 }
@@ -83,7 +79,7 @@ class cnlsrv extends \stdClass{
         break;
       }
     }
-    $plain=AES256::decrypt(base64_decode($x->crypted),hex2bin($x->jk));
+    $plain=AES::decrypt(base64_decode($x->crypted),hex2bin($x->jk));
     $response=$this->createResponse();
     $client->write($response);
     $client->close();
