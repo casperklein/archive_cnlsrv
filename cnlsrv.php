@@ -129,7 +129,7 @@ class cnlsrv extends \stdClass{
   function __destruct(){
     foreach($this as $k=>$v){
       if(!is_null($this->{$k})){
-        $this->{$k}=(unset)$this->{$k};
+        $this->{$k}=NULL;
       }
     }
   }
